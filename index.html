@@ -75,6 +75,11 @@
             font-weight: bold;
         }
 
+        .contact-btn {
+            background: #25D366;
+            margin-top: 10px;
+        }
+
         footer {
             margin-top: 20px;
             font-size: 14px;
@@ -94,11 +99,15 @@
         <input type="number" id="r" placeholder="Enter R (Resultant Force)">
         <button onclick="calculate()">Calculate</button>
         <p id="result"></p>
+        
+        <!-- Contact Us Button -->
+        <button class="contact-btn" onclick="contactAayush()">Contact Us</button>
+
         <footer>© Aayush | AyTech Studio | Computer Science</footer>
     </div>
 
     <script>
-        // AI Voice Greeting (Fixed)
+        // AI Voice Greeting
         window.onload = function() {
             if ('speechSynthesis' in window) {
                 let speech = new SpeechSynthesisUtterance("Welcome to AyTech Studio by Aayush");
@@ -126,7 +135,6 @@
             alpha = parseFloat(alpha) || null;
             r = parseFloat(r) || null;
 
-            // Convert degrees to radians
             if (theta !== null) theta = theta * (Math.PI / 180);
             if (alpha !== null) alpha = alpha * (Math.PI / 180);
 
@@ -160,6 +168,14 @@
             else {
                 document.getElementById("result").innerHTML = "⚠️ Please enter valid inputs!";
             }
+        }
+
+        // Contact Aayush on WhatsApp
+        function contactAayush() {
+            let phoneNumber = "917742065298"; // Your WhatsApp Number
+            let message = encodeURIComponent("Hey Aayush! 🚀 I just checked out your Resultant Force Calculator. It's amazing! I have a question. Can you help me?");
+            let whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
+            window.open(whatsappURL, "_blank");
         }
     </script>
 
