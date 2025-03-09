@@ -77,7 +77,8 @@
 
         footer {
             margin-top: 20px;
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: bold;
             color: #555;
         }
     </style>
@@ -93,15 +94,23 @@
         <input type="number" id="r" placeholder="Enter R (Resultant Force)">
         <button onclick="calculate()">Calculate</button>
         <p id="result"></p>
-        <footer>© AyTech Studio | Computer Science</footer>
+        <footer>© Aayush | AyTech Studio | Computer Science</footer>
     </div>
 
     <script>
-        // AI Voice Greeting
+        // AI Voice Greeting (Fixed)
         window.onload = function() {
-            let speech = new SpeechSynthesisUtterance("Welcome to AyTech Studio");
-            speech.lang = "en-US";
-            window.speechSynthesis.speak(speech);
+            if ('speechSynthesis' in window) {
+                let speech = new SpeechSynthesisUtterance("Welcome to AyTech Studio by Aayush");
+                speech.lang = "en-US";
+
+                let voices = window.speechSynthesis.getVoices();
+                speech.voice = voices.find(voice => voice.lang === "en-US") || voices[0];
+
+                window.speechSynthesis.speak(speech);
+            } else {
+                console.warn("Speech synthesis not supported in this browser.");
+            }
         };
 
         function calculate() {
