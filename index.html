@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultant Force Calculator | AyTech Studio</title>
+    <style>
+        /* Background Animation */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(-45deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            font-family: Arial, sans-serif;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Calculator UI */
+        .calculator {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        button {
+            background: #ff7e5f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #e76d53;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h2>Resultant Force Calculator</h2>
+        <input type="number" id="p" placeholder="Enter P (Force)">
+        <input type="number" id="q" placeholder="Enter Q (Force)">
+        <input type="number" id="theta" placeholder="Enter θ (Angle in Degrees)">
+        <input type="number" id="alpha" placeholder="Enter α (Angle in Degrees)">
+        <input type="number" id="r" placeholder="Enter R (Resultant Force)">
+        <button onclick="calculate()">Calculate</button>
+        <p id="result"></p>
+        <footer>© AyTech Studio | Computer Science</footer>
+    </div>
+
+    <script>
+        // AI Voice Greeting
+        window.onload = function() {
+            let speech = new SpeechSynthesisUtterance("Welcome to AyTech Studio");
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        };
+
+        function calculate() {
+            let p = document.getElementById("p").value;
+            let q = document.getElementById("q").value;
+            let theta = document.getElementById("theta").value;
+            let alpha = document.getElementById("alpha").value;
+            let r = document.getElementById("r").value;
+
+            p = parseFloat(p) || null;
+            q = parseFloat(q) || null;
+            theta = parseFloat(theta) || null;
+            alpha = parseFloat(alpha) || null;
+            r = parseFloat(r) || null;
+
+            // Convert degrees to radians
+            if (theta !== null) theta = theta * (Math.PI / 180);
+            if (alpha !== null) alpha = alpha * (Math.PI / 180);
+
+            if (r === null && p !== null && q !== null && theta !== null) {
+                // Calculate R
+                r = Math.sqrt(p**2 + q**2 + 2 * p * q * Math.cos(theta));
+                document.getElementById("result").innerHTML = `Resultant Force (R): ${r.toFixed(3)}`;
+            } 
+            else if (q === null && p !== null && r !== null && theta !== null) {
+                // Calculate Q using quadratic formula
+                let A = 1;
+                let B = 2 * p * Math.cos(theta);
+                let C = p**2 - r**2;
+
+                let discriminant = B * B - 4 * A * C;
+                if (discriminant < 0) {
+                    document.getElementById("result").innerHTML = "No real solution for Q!";
+                    return;
+                }
+
+                let q1 = (-B + Math.sqrt(discriminant)) / (2 * A);
+                let q2 = (-B - Math.sqrt(discriminant)) / (2 * A);
+                document.getElementById("result").innerHTML = `Possible values of Q: ${q1.toFixed(3)} or ${q2.toFixed(3)}`;
+            } 
+            else if (theta === null && p !== null && q !== null && r !== null) {
+                // Calculate θ
+                let cosTheta = (r**2 - p**2 - q**2) / (2 * p * q);
+                theta = Math.acos(cosTheta) * (180 / Math.PI); // Convert to degrees
+                document.getElementById("result").innerHTML = `Angle θ: ${theta.toFixed(3)}°`;
+            } 
+            else {
+                document.getElementById("result").innerHTML = "⚠️ Please enter valid inputs!";
+            }
+        }
+    </script>
+
+</body>
+</html>
