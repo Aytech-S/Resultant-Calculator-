@@ -25,8 +25,8 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Calculator UI */
-        .calculator {
+        /* Login and Calculator UI */
+        .container {
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
@@ -46,7 +46,7 @@
             margin-bottom: 20px;
         }
 
-        input {
+        input, select {
             width: 80%;
             padding: 10px;
             margin: 5px;
@@ -86,17 +86,49 @@
             font-weight: bold;
             color: #555;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="calculator">
+    <div class="container" id="loginContainer">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Enter Username (e.g., CS)">
+        <input type="password" id="password" placeholder="Enter Password (12345)">
+        <button onclick="login()">Login</button>
+        <p id="loginResult"></p>
+    </div>
+
+    <div class="container" id="calculatorContainer" style="display: none;">
         <h2>Resultant Force Calculator</h2>
-        <input type="number" id="p" placeholder="Enter P (Force)">
-        <input type="number" id="q" placeholder="Enter Q (Force)">
-        <input type="number" id="theta" placeholder="Enter θ (Angle in Degrees)">
-        <input type="number" id="alpha" placeholder="Enter α (Angle in Degrees)">
-        <input type="number" id="r" placeholder="Enter R (Resultant Force)">
+        <select id="calculationType" onchange="showInputs()">
+            <option value="">Select Calculation</option>
+            <option value="r">Calculate R</option>
+            <option value="q">Calculate Q</option>
+            <option value="theta">Calculate θ</option>
+        </select>
+
+        <div id="rInputs" class="hidden">
+            <input type="number" id="p" placeholder="Enter P (Force)">
+            <input type="number" id="q" placeholder="Enter Q (Force)">
+            <input type="number" id="theta" placeholder="Enter θ (Angle in Degrees)">
+        </div>
+
+        <div id="qInputs" class="hidden">
+            <input type="number" id="pQ" placeholder="Enter P (Force)">
+            <input type="number" id="rQ" placeholder="Enter R (Resultant Force)">
+            <input type="number" id="thetaQ" placeholder="Enter θ (Angle in Degrees)">
+        </div>
+
+        <div id="thetaInputs" class="hidden">
+            <input type="number" id="pTheta" placeholder="Enter P (Force)">
+            <input type="number" id="qTheta" placeholder="Enter Q (Force)">
+            <input type="number" id="rTheta" placeholder="Enter R (Resultant Force)">
+        </div>
+
         <button onclick="calculate()">Calculate</button>
         <p id="result"></p>
         
@@ -108,6 +140,10 @@
     </div>
 
     <script>
+        // User credentials
+        const validUsername = "CS";
+        const validPassword = "12345";
+
         // AI Voice Greeting
         window.onload = function() {
             if ('speechSynthesis' in window) {
@@ -123,66 +159,94 @@
             }
         };
 
-        function calculate() {
-            let p = document.getElementById("p").value;
-            let q = document.getElementById("q").value;
-            let theta = document.getElementById("theta").value;
-            let alpha = document.getElementById("alpha").value;
-            let r = document.getElementById("r").value;
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
 
-            p = parseFloat(p) || null;
-            q = parseFloat(q) || null;
-            theta = parseFloat(theta) || null;
-            alpha = parseFloat(alpha) || null;
-            r = parseFloat(r) || null;
-
-            if (theta !== null) theta = theta * (Math.PI / 180);
-            if (alpha !== null) alpha = alpha * (Math.PI / 180);
-
-            if (r === null && p !== null && q !== null && theta !== null) {
-                // Calculate R
-                r = Math.sqrt(p**2 + q**2 + 2 * p * q * Math.cos(theta));
-                document.getElementById("result").innerHTML = `Resultant Force (R): ${r.toFixed(3)}`;
-            } 
-            else if (q === null && p !== null && r !== null && theta !== null) {
-                // Calculate Q using quadratic formula
-                let A = 1;
-                let B = 2 * p * Math.cos(theta);
-                let C = p**2 - r**2;
-
-                let discriminant = B * B - 4 * A * C;
-                if (discriminant < 0) {
-                    document.getElementById("result").innerHTML = "No real solution for Q!";
-                    return;
-                }
-
-                let q1 = (-B + Math.sqrt(discriminant)) / (2 * A);
-                let q2 = (-B - Math.sqrt(discriminant)) / (2 * A);
-                document.getElementById("result").innerHTML = `Possible values of Q: ${q1.toFixed(3)} or ${q2.toFixed(3)}`;
-            } 
-            else if (theta === null && p !== null && q !== null && r !== null) {
-                // Calculate θ
-                let cosTheta = (r**2 - p**2 - q**2) / (2 * p * q);
-                theta = Math.acos(cosTheta) * (180 / Math.PI); // Convert to degrees
-                document.getElementById("result").innerHTML = `Angle θ: ${theta.toFixed(3)}°`;
-            } 
-            else {
-                document.getElementById("result").innerHTML = "⚠️ Please enter valid inputs!";
+            if (username === validUsername && password === validPassword) {
+                document.getElementById("loginContainer").style.display = "none";
+                document.getElementById("calculatorContainer").style.display = "block";
+                document.getElementById("loginResult").innerHTML = "";
+            } else {
+                document.getElementById("loginResult").innerHTML = "⚠️ Invalid username or password!";
             }
         }
 
-        // Contact Aayush on WhatsApp
-        function contactAayush() {
-            let phoneNumber = "917742065298"; // Your WhatsApp Number
-            let message = encodeURIComponent("Hey Aayush! 🚀 I just checked out your Resultant Force Calculator. It's amazing! I have a question. Can you help me?");
-            let whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
-            window.open(whatsappURL, "_blank");
+        function showInputs() {
+            const calculationType = document.getElementById("calculationType").value;
+
+            // Hide all input sections
+            document.getElementById("rInputs").classList.add("hidden");
+            document.getElementById("qInputs").classList.add("hidden");
+            document.getElementById("thetaInputs").classList.add("hidden");
+
+            // Show relevant input section based on selection
+            if (calculationType === "r") {
+                document.getElementById("rInputs").classList.remove("hidden");
+            } else if (calculationType === "q") {
+                document.getElementById("qInputs").classList.remove("hidden");
+            } else if (calculationType === "theta") {
+                document.getElementById("thetaInputs").classList.remove("hidden");
+            }
         }
-        // Contact Aayush on Instagram
-        function contactAayushin() {
-        let InstagramURL = 'https://www.instagram.com/_ay21_s_8?igsh=MW40eHNvenJ2Y25rMg==';
-        window.open(InstagramURL, "_blank");
+
+        function calculate() {
+            const calculationType = document.getElementById("calculationType").value;
+            let p, q, theta, r;
+
+            if (calculationType === "r") {
+                p = parseFloat(document.getElementById("p").value) || null;
+                q = parseFloat(document.getElementById("q").value) || null;
+                theta = parseFloat(document.getElementById("theta").value) || null;
+
+                if (theta !== null) theta = theta * (Math.PI / 180);
+
+                if (p !== null && q !== null && theta !== null) {
+                    // Calculate R
+                    r = Math.sqrt(p**2 + q**2 + 2 * p * q * Math.cos(theta));
+                    document.getElementById("result").innerHTML = `Resultant Force (R): ${r.toFixed(3)}`;
+                } else {
+                    document.getElementById("result").innerHTML = "⚠️ Please enter valid inputs!";
                 }
+            } 
+            else if (calculationType === "q") {
+                p = parseFloat(document.getElementById("pQ").value) || null;
+                r = parseFloat(document.getElementById("rQ").value) || null;
+                theta = parseFloat(document.getElementById("thetaQ").value) || null;
+
+                if (theta !== null) theta = theta * (Math.PI / 180);
+
+                if (p !== null && r !== null && theta !== null) {
+                    // Calculate Q using quadratic formula
+                    let A = 1;
+                    let B = 2 * p * Math.cos(theta);
+                    let C = p**2 - r**2;
+
+                    let discriminant = B * B - 4 * A * C;
+                    if (discriminant < 0) {
+                        document.getElementById("result").innerHTML = "No real solution for Q!";
+                        return;
+                    }
+
+                    let q1 = (-B + Math.sqrt(discriminant)) / (2 * A);
+                    let q2 = (-B - Math.sqrt(discriminant)) / (2 * A);
+                    document.getElementById("result").innerHTML = `Angle (θ): ${theta.toFixed(3)}°`;
+                } else {
+                    document.getElementById("result").innerHTML = "⚠️ Please enter valid inputs!";
+                }
+            }
+        }
+
+        function contactAayush() {
+            const phoneNumber = "7742065298";
+            const message = encodeURIComponent("Hello, I would like to get in touch with AyTech Studio.");
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+        }
+
+        function contactAayushin() {
+            const instagramLink = "https://instagram.com/ay21_s_8";
+            window.open(instagramLink, "_blank");
+        }
     </script>
 
 </body>
