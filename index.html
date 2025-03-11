@@ -6,26 +6,15 @@
     <title>Resultant Force Calculator | AyTech Studio</title>
     <style>
         /* Background Animation */
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(-45deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5);
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
+         body {
             font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            background: black;
+            position: relative;
+            color: white;
+            height: 100vh;
         }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Login and Calculator UI */
         .container {
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
@@ -118,7 +107,7 @@
     </style>
 </head>
 <body>
-
+    <div class="stars" id="stars"></div>
     <div class="container" id="loginContainer">
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Enter Username">
